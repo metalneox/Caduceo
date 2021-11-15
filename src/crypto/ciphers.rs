@@ -21,7 +21,7 @@ fn shift_word(text:&str,num:usize)->String{
         }
     }
 
-    return result;
+    result
 }
 
 fn sub_strings(source: &str, sub_size: usize) -> Vec<String> {
@@ -176,7 +176,7 @@ pub fn vigenere_crypt(frase:&str,key:&str)->String{
         flag+=1;
     }
 
-    return result;
+    result
 }
 #[allow(dead_code)]
 pub fn vigenere_decrypt(frase:&str,key:&str)->String{
@@ -209,7 +209,7 @@ pub fn vigenere_decrypt(frase:&str,key:&str)->String{
         flag+=1;
     }
 
-    return result;
+    result
 }
 #[allow(dead_code)]
 pub fn carbonaro(text:&str)->String{
