@@ -21,11 +21,11 @@ jobs:
     - name: Run tests 🧪
       run: cargo test --verbose
     - name: Make Documentation
-      run: cargo doc 
+      run: cargo doc --no-deps --lib --release
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: target/doc # The folder the action should deploy.
+        folder: target/doc/caduceo # The folder the action should deploy.
 
 
 
