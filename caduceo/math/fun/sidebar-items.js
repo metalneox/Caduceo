@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["collatz",""],["is_armstrong_number",""]]};
