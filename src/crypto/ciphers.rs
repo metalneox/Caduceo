@@ -81,7 +81,7 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
 
 /// Polybius Square code encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .
 /// 
-///     Example of how to use this library.
+/// Example of how to use this library.
 /// ```
 /// use crate::crypto::ciphers::*;
 ///
