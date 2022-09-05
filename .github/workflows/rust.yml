@@ -28,5 +28,5 @@ jobs:
     - name: Deploy Doc 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: target/doc/caduceo # The folder the action should deploy.
+        folder: target/doc # The folder the action should deploy.
 
