@@ -78,8 +78,9 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
     }
     chess
 }
+
+/// Polybius Square code encoder
 #[allow(dead_code)]
-/// POlybius Square
 pub fn polybius_crypt(text: &str, size: usize) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyz";
 
@@ -100,6 +101,7 @@ pub fn polybius_crypt(text: &str, size: usize) -> String {
     result
 }
 
+/// Polybius Square code decoder
 pub fn polybius_decrypt(text: &str, size: usize) -> String {
     //let size = 5;
     let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -126,6 +128,7 @@ fn remove_whitespace(s: &mut String) {
 
 //TODO nihilist
 //https://it.wikipedia.org/wiki/Cifrario_nichilista
+/// Nihilist code encoder
 #[allow(dead_code)]
 pub fn nihilist(text: &str, key: &str) -> String {
     //faccio un polybius e lo mischio
@@ -143,16 +146,19 @@ pub fn nihilist(text: &str, key: &str) -> String {
     "".to_owned()
 }
 
+///Rot13 code encoder
 #[allow(dead_code)]
 pub fn rot13(text: &str) -> String {
     shift_word(text, 13usize)
 }
 //FIXME Codice duplicato tra rot13 e cesar con funzione privata shift_word(numero di parole da shiftare)
+///Cesar code encoder
 #[allow(dead_code)]
 pub fn cesar(text: &str) -> String {
     shift_word(text, 3usize)
 }
 
+/// Vigenere code encoder
 #[allow(dead_code)]
 pub fn vigenere_crypt(frase: &str, key: &str) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -179,6 +185,8 @@ pub fn vigenere_crypt(frase: &str, key: &str) -> String {
 
     result
 }
+
+/// Vigenere code decoder
 #[allow(dead_code)]
 pub fn vigenere_decrypt(frase: &str, key: &str) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -212,6 +220,8 @@ pub fn vigenere_decrypt(frase: &str, key: &str) -> String {
 
     result
 }
+
+///Carbonaro code decoder
 #[allow(dead_code)]
 pub fn carbonaro(text: &str) -> String {
     /*
@@ -232,6 +242,7 @@ pub fn carbonaro(text: &str) -> String {
     result
 }
 
+///Atbash code decoder
 //TODO funzione privato di semplice sostituzione per atbash e carbonaro
 #[allow(dead_code)]
 pub fn atbash(text: &str) -> String {
@@ -254,6 +265,7 @@ pub fn atbash(text: &str) -> String {
 
 //TODO MORSE AUDIO
 //MORSE
+///Morse code decoder
 #[allow(dead_code)]
 pub fn morse_decoder(text: &str) -> char {
     match text {
@@ -311,6 +323,7 @@ pub fn morse_decoder(text: &str) -> char {
     }
 }
 
+///Morse code encoder
 #[allow(dead_code)]
 pub fn morse_coder(character: char) -> &'static str {
     match character {
