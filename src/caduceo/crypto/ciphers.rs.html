@@ -386,6 +386,14 @@
 <span id="380">380</span>
 <span id="381">381</span>
 <span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
 </pre><pre class="rust"><code><span class="comment">//extern crate itertools;</span>
 <span class="kw">use</span> <span class="ident">itertools::Itertools</span>;
 <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
@@ -467,7 +475,15 @@
     <span class="ident">chess</span>
 }
 
-<span class="doccomment">/// Polybius Square code encoder</span>
+<span class="doccomment">/// Polybius Square code encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// Example of how to use this library.</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use crate::caduceo::crypto::ciphers::*;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let result = polybius_crypt(&quot;ciao&quot;, 5);</span>
+<span class="doccomment">/// assert_eq!(result , &quot;13241134&quot;)</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">polybius_crypt</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">String</span> {
     <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>;
