@@ -83,7 +83,7 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
 /// 
 /// Example of how to use this library.
 /// ```
-/// use crate::crypto::ciphers::*;
+/// use crate::caduceo::crypto::ciphers::*;
 ///
 /// let result = polybius_crypt("ciao", 5);
 /// assert_eq!(result , "13241134")
