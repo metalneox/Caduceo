@@ -1,3 +1,4 @@
+/// Collatz conjecture for more information [here](https://en.wikipedia.org/wiki/Collatz_conjecture) .
 pub fn collatz(n: u64) -> Option<u64> {
     match n {
         0 => None,
@@ -13,6 +14,7 @@ pub fn collatz(n: u64) -> Option<u64> {
     }
 }
 
+/// Armstrong number for more information [here](https://en.wikipedia.org/wiki/Narcissistic_number) .
 pub fn is_armstrong_number(num: u32) -> bool {
     let num_str = num.to_string();
     let length = num_str.len() as u32;
