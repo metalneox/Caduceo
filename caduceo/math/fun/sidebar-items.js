@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["collatz",""],["is_armstrong_number",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["collatz","Collatz conjecture for more information here ."],["is_armstrong_number","Armstrong number for more information here ."]]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["brackets_are_balanced",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["brackets_are_balanced","Brackets balanced for more information here ."]]};
