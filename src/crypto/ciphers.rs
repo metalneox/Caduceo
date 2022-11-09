@@ -200,6 +200,7 @@ pub fn nihilist_crypt(text: &str, key: &str) -> String {
 }
 
 //FIX ME Da fixare
+/// Nihilist decoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .
 #[allow(dead_code)]
 pub fn nihilist_decrypt(text: &str, key: &str) -> String {
     //metto 5 come size default
