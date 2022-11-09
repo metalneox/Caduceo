@@ -24,3 +24,9 @@ pub fn brackets_are_balanced(string: &str) -> bool {
     }
     parenthesis.is_empty()
 }
+
+///Remove whitespace from String.
+fn remove_whitespace(s: &mut String) {
+    s.retain(|c| !c.is_whitespace());
+}
+

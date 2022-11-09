@@ -2,6 +2,7 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
+
 fn shift_word(text: &str, num: usize) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let mut result = "".to_owned();
@@ -47,9 +48,12 @@ fn polybius_chess(alphabet: &str, size: usize) -> HashMap<usize, char> {
     for c in alphabet.chars() {
         chess.insert(index + flag_loop, c);
         //If size == 5  'i' and 'j'  same position
-        if c != 'i' && size == 5 {
-            flag_loop += 1;
-        }
+        //if c != 'i' && size == 5 {
+        //    flag_loop += 1;
+        //}
+
+        flag_loop += 1;
+
         if flag_loop >= size {
             flag_loop = 0;
             index += 10;
@@ -68,14 +72,20 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
     for c in alphabet.chars() {
         chess.insert(c, index + flag_loop);
         //If size == 5  'i' and 'j'  same position
-        if c != 'i' && size == 5 {
-            flag_loop += 1;
-        }
+        //if c != 'i' && size == 5 {
+        //    flag_loop += 1;
+        //}
+        flag_loop += 1;
+
         if flag_loop >= size {
             flag_loop = 0;
             index += 10;
         }
     }
+    let temp = chess.get(&'i').unwrap().clone();
+
+    chess.insert('j',temp);
+    //println!("prova ->{}",temp);
     chess
 }
 
@@ -90,7 +100,7 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
 /// ```
 #[allow(dead_code)]
 pub fn polybius_crypt(text: &str, size: usize) -> String {
-    let chars = "abcdefghijklmnopqrstuvwxyz";
+    let chars = "abcdefghiklmnopqrstuvwxyz";
 
     let square = polybius_chess2(chars, size);
     let mut result = String::new();
@@ -99,7 +109,6 @@ pub fn polybius_crypt(text: &str, size: usize) -> String {
         println!("{}: {}", key, value);
     }
     */
-
     for r in text.chars() {
         match square.get(&r) {
             Some(res) => result.push_str(&res.to_string()),
@@ -116,11 +125,12 @@ pub fn polybius_crypt(text: &str, size: usize) -> String {
 /// use crate::caduceo::crypto::ciphers::*;
 ///
 /// let result = polybius_decrypt("13241134", 5);
-/// assert_eq!(result , "cjao")
+/// assert_eq!(result , "ciao")
 /// ```
 pub fn polybius_decrypt(text: &str, size: usize) -> String {
     //let size = 5;
-    let chars = "abcdefghijklmnopqrstuvwxyz";
+                       // tolto j perchè i e j sono uguali
+    let chars = "abcdefghiklmnopqrstuvwxyz";
 
     let square = polybius_chess(chars, size);
     let mut result = String::new();
@@ -135,31 +145,111 @@ pub fn polybius_decrypt(text: &str, size: usize) -> String {
     result
 }
 
-/*
-fn remove_whitespace(s: &mut String) {
-    s.retain(|c| !c.is_whitespace());
-}
 
-*/
 
-//TODO nihilist
+//TODO Rimuovere codice duplicato tra polybius chess,nihilist crypt/decrypt
+//TODO Oltre al codice c'è anche strutture di dati doppie
 /// Nihilist encoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .
 #[allow(dead_code)]
-pub fn nihilist(text: &str, key: &str) -> String {
-    //faccio un polybius e lo mischio
-    //converto il testo nel suo relativo numero
-    //converto la chiave nel suo relativo numero
-    // sommo i due numeri
+pub fn nihilist_crypt(text: &str, key: &str) -> String {
+    //metto 5 come size default
+    let size = 5;
 
-    /*
-        Per realizzare un cifrario nichilista si deve prima di tutto costruire una scacchiera di Polibio utilizzando
-        un alfabeto mescolato, che viene poi usato per convertire sia il testo in chiaro sia la parola chiave in una
-        serie di numeri a due cifre. Questi numeri sono poi sommati aritmeticamente tra di loro per ottenere il testo cifrato,
-        con i numeri costituenti la chiave ripetuti secondo necessità
+    let mut text_crypt = vec![];
+    let mut key_crypt = vec![];
 
+    let mut result = vec![];
+
+    //alphabet mischiato
+    let chars = "zebrascdfghiklmnopqtuvwxy";
+
+    let square = polybius_chess2(chars, size);
+
+    /*  Print hashman debug
+    for (key, value) in &square {
+        println!("{}: {}", key, value);
+    }
     */
-    "".to_owned()
+
+    // text
+    for r in text.chars() {
+        match square.get(&r) {
+            Some(res) => text_crypt.push(res),
+            _ => (),
+        }
+    }
+
+    // key
+    for r in key.chars() {
+        match square.get(&r) {
+            Some(res) => key_crypt.push(res),
+            _ => (),
+        }
+    }
+
+    //sommo la key+text
+    let mut flag = 0;
+    for a in text_crypt{ 
+        if flag >= key.len(){flag = 0;}        
+
+        result.push( a + key_crypt[flag]);
+        flag += 1;
+    }
+
+    result.iter().join(" ")
 }
+
+//FIX ME Da fixare
+#[allow(dead_code)]
+pub fn nihilist_decrypt(text: &str, key: &str) -> String {
+    //metto 5 come size default
+    let size = 5;
+
+    let mut temp:Vec<usize> = vec![];
+
+    let mut key_crypt = vec![];
+
+    //alphabet mischiato
+    let chars = "zebrascdfghiklmnopqtuvwxy";
+
+    let square = polybius_chess2(chars, size);
+
+    let square2 = polybius_chess(chars, size);
+
+    let splitato = text.split(" ").collect::<Vec<&str>>();
+
+    let mut result = String::new();
+
+    // key
+    for r in key.chars() {
+        match square.get(&r) {
+            Some(res) => key_crypt.push(res),
+            _ => (),
+        }
+    }
+
+    ////sommo la key+text
+    let mut flag = 0;
+    for a in splitato{ 
+        if flag >= key.len(){flag = 0;}        
+
+        temp.push( a.parse::<usize>().unwrap() - key_crypt[flag]);
+        flag += 1;
+    }
+
+    println!("->{:#?}",temp);
+
+    for str in temp {
+        match square2.get(&str) {
+            Some(res) => result.push_str(&res.to_string()),
+            _ => (),
+        }
+    }
+
+    result
+
+}
+
 
 /// Rot13 code for more information [here](https://en.wikipedia.org/wiki/ROT13) .
 #[allow(dead_code)]
@@ -167,7 +257,6 @@ pub fn rot13(text: &str) -> String {
     shift_word(text, 13usize)
 }
 
-//FIXME Codice duplicato tra rot13 e cesar con funzione privata shift_word(numero di parole da shiftare)
 ///Cesar code for more information [here](https://en.wikipedia.org/wiki/Caesar_cipher) .
 #[allow(dead_code)]
 pub fn cesar(text: &str) -> String {
@@ -244,7 +333,6 @@ pub fn carbonaro(text: &str) -> String {
         Originale: A|B|C|D|E|F|G|H|I|L|M|N|O|P|Q|R|S|T|U|V|Z
         Criptato:  O|P|G|T|I|V|C|H|E|R|N|M|A|B|Q|L|Z|D|U|F|S
     */
-    //TODO Rewrite in fuctional mode
     let alphabet = "abcdefghilmnopqrstuvz";
     let carbo_alphabet = "opgtivchernmabqlzdufs";
 
@@ -258,7 +346,6 @@ pub fn carbonaro(text: &str) -> String {
     result
 }
 
-//TODO funzione privato di semplice sostituzione per atbash e carbonaro
 ///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Atbash) .
 #[allow(dead_code)]
 pub fn atbash(text: &str) -> String {
@@ -279,7 +366,6 @@ pub fn atbash(text: &str) -> String {
     result
 }
 
-//TODO MORSE AUDIO
 //MORSE
 ///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Morse_code) .
 #[allow(dead_code)]

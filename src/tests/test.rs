@@ -35,14 +35,29 @@ pub mod tests {
     fn atbashtest() {
         assert_eq!(atbash("ciao"), "uozi")
     }
-    //todo test
+    //TODO Meglio un array di ritorno che una stringa
     #[test]
     fn polybius_crypt_test() {
         assert_eq!(polybius_crypt("ciao", 5), "13241134")
     }
-    //FIXME Su una grandezza di 5 è possibile che i test si buggano su i e j che ha la stessa chiave
     #[test]
     fn polybius_decrypt_test() {
-        assert_eq!(polybius_decrypt("13241134", 5), "cjao")
+        assert_eq!(polybius_decrypt("13241134", 5), "ciao")
     }
+
+    #[test]
+    fn nihilist_crypt_test() {
+                                 //text    //key
+        assert_eq!(nihilist_crypt("prova", "ciao"), "65 46 57 94 37")
+    }
+
+    #[test]
+    fn nihilist_decrypt_test() {
+                                 //text crypt    //key
+        assert_eq!(nihilist_decrypt("65 46 57 94 37", "ciao"), "prova")
+    }
+
+
+
+
 }
