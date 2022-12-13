@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/crypto/ciphers.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>ciphers.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../caduceo/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../caduceo/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../caduceo/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/crypto/ciphers.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>ciphers.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../caduceo/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../caduceo/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../caduceo/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -483,490 +483,580 @@
 <span id="483">483</span>
 <span id="484">484</span>
 <span id="485">485</span>
-</pre><pre class="rust"><code><span class="comment">//extern crate itertools;</span>
-<span class="kw">use</span> <span class="ident">itertools::Itertools</span>;
-<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+</pre><pre class="rust"><code><span class="comment">//extern crate itertools;
+</span><span class="kw">use </span>itertools::Itertools;
+<span class="kw">use </span>std::collections::HashMap;
 
 
-<span class="kw">fn</span> <span class="ident">shift_word</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">num</span>: <span class="ident">usize</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>();
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">text</span>.<span class="ident">chars</span>() {
-        <span class="kw">let</span> <span class="ident">c_index</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">find</span>(<span class="ident">c</span>);
+<span class="kw">fn </span>shift_word(text: <span class="kw-2">&amp;</span>str, num: usize) -&gt; String {
+    <span class="kw">let </span>chars = <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="string">&quot;&quot;</span>.to_owned();
+    
+    <span class="kw">for </span>c <span class="kw">in </span>text.chars() {
+        <span class="kw">let </span>c_index = chars.find(c);
 
-        <span class="kw">if</span> <span class="ident">c_index</span>.<span class="ident">is_none</span>() {
-            <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">c</span>);
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">temp</span> <span class="op">=</span> <span class="ident">c_index</span>.<span class="ident">unwrap</span>() <span class="op">+</span> <span class="ident">num</span>;
+        <span class="kw">if </span>c_index.is_none() {
+            result.push(c);
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>temp = c_index.unwrap() + num;
 
-            <span class="kw">if</span> <span class="ident">temp</span> <span class="op">&lt;</span> <span class="number">52</span> {
-                <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">chars</span>.<span class="ident">as_bytes</span>()[<span class="ident">temp</span>] <span class="kw">as</span> <span class="ident">char</span>);
-            } <span class="kw">else</span> {
-                <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">chars</span>.<span class="ident">as_bytes</span>()[<span class="ident">temp</span> <span class="op">-</span> <span class="number">26</span>] <span class="kw">as</span> <span class="ident">char</span>);
+            <span class="kw">if </span>temp &lt; <span class="number">52 </span>{
+                result.push(chars.as_bytes()[temp] <span class="kw">as </span>char);
+            } <span class="kw">else </span>{
+                result.push(chars.as_bytes()[temp - <span class="number">26</span>] <span class="kw">as </span>char);
             }
         }
     }
 
-    <span class="ident">result</span>
+    result
 }
 
-<span class="kw">fn</span> <span class="ident">sub_strings</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">sub_size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="ident">source</span>
-        .<span class="ident">chars</span>()
-        .<span class="ident">chunks</span>(<span class="ident">sub_size</span>)
-        .<span class="ident">into_iter</span>()
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">chunk</span><span class="op">|</span> <span class="ident">chunk</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>())
-        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+<span class="kw">fn </span>sub_strings(source: <span class="kw-2">&amp;</span>str, sub_size: usize) -&gt; Vec&lt;String&gt; {
+    source
+        .chars()
+        .chunks(sub_size)
+        .into_iter()
+        .map(|chunk| chunk.collect::&lt;String&gt;())
+        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
 }
-<span class="comment">//latin alphabet,e altri tipi</span>
-<span class="comment">//struct chess_init;</span>
+<span class="comment">//latin alphabet,e altri tipi
+//struct chess_init;
 
-<span class="comment">//only for decrypt</span>
-<span class="comment">//chiave valore opzionale</span>
-<span class="kw">fn</span> <span class="ident">polybius_chess</span>(<span class="ident">alphabet</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">char</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chess</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">char</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
-    <span class="comment">//let size = 5;</span>
+//only for decrypt
+//chiave valore opzionale
+</span><span class="kw">fn </span>polybius_chess(alphabet: <span class="kw-2">&amp;</span>str, size: usize) -&gt; HashMap&lt;usize, char&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>chess: HashMap&lt;usize, char&gt; = HashMap::new();
+    <span class="comment">//let size = 5;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="number">11</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag_loop</span> <span class="op">=</span> <span class="number">0</span>;
+    </span><span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">11</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>flag_loop = <span class="number">0</span>;
 
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">alphabet</span>.<span class="ident">chars</span>() {
-        <span class="ident">chess</span>.<span class="ident">insert</span>(<span class="ident">index</span> <span class="op">+</span> <span class="ident">flag_loop</span>, <span class="ident">c</span>);
-        <span class="comment">//If size == 5  &#39;i&#39; and &#39;j&#39;  same position</span>
-        <span class="comment">//if c != &#39;i&#39; &amp;&amp; size == 5 {</span>
-        <span class="comment">//    flag_loop += 1;</span>
-        <span class="comment">//}</span>
+    <span class="kw">for </span>c <span class="kw">in </span>alphabet.chars() {
+        chess.insert(index + flag_loop, c);
+        <span class="comment">//If size == 5  &#39;i&#39; and &#39;j&#39;  same position
+        //if c != &#39;i&#39; &amp;&amp; size == 5 {
+        //    flag_loop += 1;
+        //}
 
-        <span class="ident">flag_loop</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        </span>flag_loop += <span class="number">1</span>;
 
-        <span class="kw">if</span> <span class="ident">flag_loop</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">size</span> {
-            <span class="ident">flag_loop</span> <span class="op">=</span> <span class="number">0</span>;
-            <span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">10</span>;
+        <span class="kw">if </span>flag_loop &gt;= size {
+            flag_loop = <span class="number">0</span>;
+            index += <span class="number">10</span>;
         }
     }
-    <span class="ident">chess</span>
+    chess
 }
-<span class="comment">//chiave valore opzionale non esiste un altra funzione</span>
-<span class="kw">fn</span> <span class="ident">polybius_chess2</span>(<span class="ident">alphabet</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">char</span>, <span class="ident">usize</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chess</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">char</span>, <span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
-    <span class="comment">//let size = 5;</span>
+<span class="comment">//chiave valore opzionale non esiste un altra funzione
+</span><span class="kw">fn </span>polybius_chess2(alphabet: <span class="kw-2">&amp;</span>str, size: usize) -&gt; HashMap&lt;char, usize&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>chess: HashMap&lt;char, usize&gt; = HashMap::new();
+    <span class="comment">//let size = 5;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="number">11</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag_loop</span> <span class="op">=</span> <span class="number">0</span>;
+    </span><span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">11</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>flag_loop = <span class="number">0</span>;
 
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">alphabet</span>.<span class="ident">chars</span>() {
-        <span class="ident">chess</span>.<span class="ident">insert</span>(<span class="ident">c</span>, <span class="ident">index</span> <span class="op">+</span> <span class="ident">flag_loop</span>);
-        <span class="comment">//If size == 5  &#39;i&#39; and &#39;j&#39;  same position</span>
-        <span class="comment">//if c != &#39;i&#39; &amp;&amp; size == 5 {</span>
-        <span class="comment">//    flag_loop += 1;</span>
-        <span class="comment">//}</span>
-        <span class="ident">flag_loop</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    <span class="kw">for </span>c <span class="kw">in </span>alphabet.chars() {
+        chess.insert(c, index + flag_loop);
+        <span class="comment">//If size == 5  &#39;i&#39; and &#39;j&#39;  same position
+        //if c != &#39;i&#39; &amp;&amp; size == 5 {
+        //    flag_loop += 1;
+        //}
+        </span>flag_loop += <span class="number">1</span>;
 
-        <span class="kw">if</span> <span class="ident">flag_loop</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">size</span> {
-            <span class="ident">flag_loop</span> <span class="op">=</span> <span class="number">0</span>;
-            <span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">10</span>;
+        <span class="kw">if </span>flag_loop &gt;= size {
+            flag_loop = <span class="number">0</span>;
+            index += <span class="number">10</span>;
         }
     }
-    <span class="kw">let</span> <span class="ident">temp</span> <span class="op">=</span> <span class="ident">chess</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="string">&#39;i&#39;</span>).<span class="ident">unwrap</span>().<span class="ident">clone</span>();
+    <span class="kw">let </span>temp = chess.get(<span class="kw-2">&amp;</span><span class="string">&#39;i&#39;</span>).unwrap().clone();
 
-    <span class="ident">chess</span>.<span class="ident">insert</span>(<span class="string">&#39;j&#39;</span>,<span class="ident">temp</span>);
-    <span class="comment">//println!(&quot;prova -&gt;{}&quot;,temp);</span>
-    <span class="ident">chess</span>
+    chess.insert(<span class="string">&#39;j&#39;</span>,temp);
+    <span class="comment">//println!(&quot;prova -&gt;{}&quot;,temp);
+    </span>chess
 }
 
-<span class="doccomment">/// Polybius Square code encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .</span>
-<span class="doccomment">/// </span>
-<span class="doccomment">/// Example of how to use this library.</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use crate::caduceo::crypto::ciphers::*;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let result = polybius_crypt(&quot;ciao&quot;, 5);</span>
-<span class="doccomment">/// assert_eq!(result , &quot;13241134&quot;)</span>
-<span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">polybius_crypt</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghiklmnopqrstuvwxyz&quot;</span>;
+<span class="doccomment">/// Polybius Square code encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .
+/// 
+/// Example of how to use this library.
+/// ```
+/// use crate::caduceo::crypto::ciphers::*;
+///
+/// let result = polybius_crypt(&quot;ciao&quot;, 5);
+/// assert_eq!(result , &quot;13241134&quot;)
+/// ```
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>polybius_crypt(text: <span class="kw-2">&amp;</span>str, size: usize) -&gt; String {
+    <span class="kw">let </span>chars = <span class="string">&quot;abcdefghiklmnopqrstuvwxyz&quot;</span>;
 
-    <span class="kw">let</span> <span class="ident">square</span> <span class="op">=</span> <span class="ident">polybius_chess2</span>(<span class="ident">chars</span>, <span class="ident">size</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String::new</span>();
+    <span class="kw">let </span>square = polybius_chess2(chars, size);
+    <span class="kw">let </span><span class="kw-2">mut </span>result = String::new();
     <span class="comment">/*  Print hashman debug
     for (key, value) in &amp;square {
         println!(&quot;{}: {}&quot;, key, value);
     }
-    */</span>
-    <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">text</span>.<span class="ident">chars</span>() {
-        <span class="kw">match</span> <span class="ident">square</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>.<span class="ident">to_string</span>()),
-            <span class="kw">_</span> =&gt; (),
+    */
+    </span><span class="kw">for </span>r <span class="kw">in </span>text.chars() {
+        <span class="kw">match </span>square.get(<span class="kw-2">&amp;</span>r) {
+            <span class="prelude-val">Some</span>(res) =&gt; result.push_str(<span class="kw-2">&amp;</span>res.to_string()),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
-    <span class="ident">result</span>
+    result
 }
 
-<span class="doccomment">/// Polybius Square encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .</span>
-<span class="doccomment">/// </span>
-<span class="doccomment">/// Example of how to use this library.</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use crate::caduceo::crypto::ciphers::*;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let result = polybius_decrypt(&quot;13241134&quot;, 5);</span>
-<span class="doccomment">/// assert_eq!(result , &quot;ciao&quot;)</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">polybius_decrypt</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">String</span> {
-    <span class="comment">//let size = 5;</span>
-                       <span class="comment">// tolto j perchè i e j sono uguali</span>
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghiklmnopqrstuvwxyz&quot;</span>;
+<span class="doccomment">/// Polybius Square encoder for more information [here](https://en.wikipedia.org/wiki/Polybius_square) .
+/// 
+/// Example of how to use this library.
+/// ```
+/// use crate::caduceo::crypto::ciphers::*;
+///
+/// let result = polybius_decrypt(&quot;13241134&quot;, 5);
+/// assert_eq!(result , &quot;ciao&quot;)
+/// ```
+</span><span class="kw">pub fn </span>polybius_decrypt(text: <span class="kw-2">&amp;</span>str, size: usize) -&gt; String {
+    <span class="comment">//let size = 5;
+                       // tolto j perchè i e j sono uguali
+    </span><span class="kw">let </span>chars = <span class="string">&quot;abcdefghiklmnopqrstuvwxyz&quot;</span>;
 
-    <span class="kw">let</span> <span class="ident">square</span> <span class="op">=</span> <span class="ident">polybius_chess</span>(<span class="ident">chars</span>, <span class="ident">size</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String::new</span>();
-    <span class="kw">let</span> <span class="ident">temp</span> <span class="op">=</span> <span class="ident">sub_strings</span>(<span class="ident">text</span>, <span class="number">2</span>);
+    <span class="kw">let </span>square = polybius_chess(chars, size);
+    <span class="kw">let </span><span class="kw-2">mut </span>result = String::new();
+    <span class="kw">let </span>temp = sub_strings(text, <span class="number">2</span>);
 
-    <span class="kw">for</span> <span class="ident">str</span> <span class="kw">in</span> <span class="ident">temp</span> {
-        <span class="kw">match</span> <span class="ident">square</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">str</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>()) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>.<span class="ident">to_string</span>()),
-            <span class="kw">_</span> =&gt; (),
+    <span class="kw">for </span>str <span class="kw">in </span>temp {
+        <span class="kw">match </span>square.get(<span class="kw-2">&amp;</span>str.parse::&lt;usize&gt;().unwrap()) {
+            <span class="prelude-val">Some</span>(res) =&gt; result.push_str(<span class="kw-2">&amp;</span>res.to_string()),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
-    <span class="ident">result</span>
+    result
 }
 
 
 
-<span class="comment">//TODO Rimuovere codice duplicato tra polybius chess,nihilist crypt/decrypt</span>
-<span class="comment">//TODO Oltre al codice c&#39;è anche strutture di dati doppie</span>
-<span class="doccomment">/// Nihilist encoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">nihilist_crypt</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="comment">//metto 5 come size default</span>
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="number">5</span>;
+<span class="comment">//TODO Rimuovere codice duplicato tra polybius chess,nihilist crypt/decrypt
+//TODO Oltre al codice c&#39;è anche strutture di dati doppie
+</span><span class="doccomment">/// Nihilist encoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>nihilist_crypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="comment">//metto 5 come size default
+    </span><span class="kw">let </span>size = <span class="number">5</span>;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">text_crypt</span> <span class="op">=</span> <span class="macro">vec!</span>[];
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_crypt</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>text_crypt = <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>key_crypt = <span class="macro">vec!</span>[];
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="macro">vec!</span>[];
 
-    <span class="comment">//alphabet mischiato</span>
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;zebrascdfghiklmnopqtuvwxy&quot;</span>;
+    <span class="comment">//alphabet mischiato
+    </span><span class="kw">let </span>chars = <span class="string">&quot;zebrascdfghiklmnopqtuvwxy&quot;</span>;
 
-    <span class="kw">let</span> <span class="ident">square</span> <span class="op">=</span> <span class="ident">polybius_chess2</span>(<span class="ident">chars</span>, <span class="ident">size</span>);
+    <span class="kw">let </span>square = polybius_chess2(chars, size);
 
     <span class="comment">/*  Print hashman debug
     for (key, value) in &amp;square {
         println!(&quot;{}: {}&quot;, key, value);
     }
-    */</span>
+    */
 
-    <span class="comment">// text</span>
-    <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">text</span>.<span class="ident">chars</span>() {
-        <span class="kw">match</span> <span class="ident">square</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">text_crypt</span>.<span class="ident">push</span>(<span class="ident">res</span>),
-            <span class="kw">_</span> =&gt; (),
+    // text
+    </span><span class="kw">for </span>r <span class="kw">in </span>text.chars() {
+        <span class="kw">match </span>square.get(<span class="kw-2">&amp;</span>r) {
+            <span class="prelude-val">Some</span>(res) =&gt; text_crypt.push(res),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
 
-    <span class="comment">// key</span>
-    <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">key</span>.<span class="ident">chars</span>() {
-        <span class="kw">match</span> <span class="ident">square</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">key_crypt</span>.<span class="ident">push</span>(<span class="ident">res</span>),
-            <span class="kw">_</span> =&gt; (),
+    <span class="comment">// key
+    </span><span class="kw">for </span>r <span class="kw">in </span>key.chars() {
+        <span class="kw">match </span>square.get(<span class="kw-2">&amp;</span>r) {
+            <span class="prelude-val">Some</span>(res) =&gt; key_crypt.push(res),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
 
-    <span class="comment">//sommo la key+text</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">a</span> <span class="kw">in</span> <span class="ident">text_crypt</span>{ 
-        <span class="kw">if</span> <span class="ident">flag</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">key</span>.<span class="ident">len</span>(){<span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;}        
+    <span class="comment">//sommo la key+text
+    </span><span class="kw">let </span><span class="kw-2">mut </span>flag = <span class="number">0</span>;
+    <span class="kw">for </span>a <span class="kw">in </span>text_crypt{ 
+        <span class="kw">if </span>flag &gt;= key.len(){flag = <span class="number">0</span>;}        
 
-        <span class="ident">result</span>.<span class="ident">push</span>( <span class="ident">a</span> <span class="op">+</span> <span class="ident">key_crypt</span>[<span class="ident">flag</span>]);
-        <span class="ident">flag</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        result.push( a + key_crypt[flag]);
+        flag += <span class="number">1</span>;
     }
 
-    <span class="ident">result</span>.<span class="ident">iter</span>().<span class="ident">join</span>(<span class="string">&quot; &quot;</span>)
+    result.iter().join(<span class="string">&quot; &quot;</span>)
 }
 
-<span class="comment">//FIX ME Da fixare</span>
-<span class="doccomment">/// Nihilist decoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">nihilist_decrypt</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="comment">//metto 5 come size default</span>
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="number">5</span>;
+<span class="comment">//FIX ME Da fixare
+</span><span class="doccomment">/// Nihilist decoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>nihilist_decrypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="comment">//metto 5 come size default
+    </span><span class="kw">let </span>size = <span class="number">5</span>;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">temp</span>:<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>temp:Vec&lt;usize&gt; = <span class="macro">vec!</span>[];
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_crypt</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>key_crypt = <span class="macro">vec!</span>[];
 
-    <span class="comment">//alphabet mischiato</span>
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;zebrascdfghiklmnopqtuvwxy&quot;</span>;
+    <span class="comment">//alphabet mischiato
+    </span><span class="kw">let </span>chars = <span class="string">&quot;zebrascdfghiklmnopqtuvwxy&quot;</span>;
 
-    <span class="kw">let</span> <span class="ident">square</span> <span class="op">=</span> <span class="ident">polybius_chess2</span>(<span class="ident">chars</span>, <span class="ident">size</span>);
+    <span class="kw">let </span>square = polybius_chess2(chars, size);
 
-    <span class="kw">let</span> <span class="ident">square2</span> <span class="op">=</span> <span class="ident">polybius_chess</span>(<span class="ident">chars</span>, <span class="ident">size</span>);
+    <span class="kw">let </span>square2 = polybius_chess(chars, size);
 
-    <span class="kw">let</span> <span class="ident">splitato</span> <span class="op">=</span> <span class="ident">text</span>.<span class="ident">split</span>(<span class="string">&quot; &quot;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+    <span class="kw">let </span>splitato = text.split(<span class="string">&quot; &quot;</span>).collect::&lt;Vec&lt;<span class="kw-2">&amp;</span>str&gt;&gt;();
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String::new</span>();
+    <span class="kw">let </span><span class="kw-2">mut </span>result = String::new();
 
-    <span class="comment">// key</span>
-    <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">key</span>.<span class="ident">chars</span>() {
-        <span class="kw">match</span> <span class="ident">square</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">key_crypt</span>.<span class="ident">push</span>(<span class="ident">res</span>),
-            <span class="kw">_</span> =&gt; (),
+    <span class="comment">// key
+    </span><span class="kw">for </span>r <span class="kw">in </span>key.chars() {
+        <span class="kw">match </span>square.get(<span class="kw-2">&amp;</span>r) {
+            <span class="prelude-val">Some</span>(res) =&gt; key_crypt.push(res),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
 
-    <span class="comment">////sommo la key+text</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">a</span> <span class="kw">in</span> <span class="ident">splitato</span>{ 
-        <span class="kw">if</span> <span class="ident">flag</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">key</span>.<span class="ident">len</span>(){<span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;}        
+    <span class="comment">////sommo la key+text
+    </span><span class="kw">let </span><span class="kw-2">mut </span>flag = <span class="number">0</span>;
+    <span class="kw">for </span>a <span class="kw">in </span>splitato{ 
+        <span class="kw">if </span>flag &gt;= key.len(){flag = <span class="number">0</span>;}        
 
-        <span class="ident">temp</span>.<span class="ident">push</span>( <span class="ident">a</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>() <span class="op">-</span> <span class="ident">key_crypt</span>[<span class="ident">flag</span>]);
-        <span class="ident">flag</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        temp.push( a.parse::&lt;usize&gt;().unwrap() - key_crypt[flag]);
+        flag += <span class="number">1</span>;
     }
 
-    <span class="macro">println!</span>(<span class="string">&quot;-&gt;{:#?}&quot;</span>,<span class="ident">temp</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;-&gt;{:#?}&quot;</span>,temp);
 
-    <span class="kw">for</span> <span class="ident">str</span> <span class="kw">in</span> <span class="ident">temp</span> {
-        <span class="kw">match</span> <span class="ident">square2</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">str</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">res</span>) =&gt; <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>.<span class="ident">to_string</span>()),
-            <span class="kw">_</span> =&gt; (),
+    <span class="kw">for </span>str <span class="kw">in </span>temp {
+        <span class="kw">match </span>square2.get(<span class="kw-2">&amp;</span>str) {
+            <span class="prelude-val">Some</span>(res) =&gt; result.push_str(<span class="kw-2">&amp;</span>res.to_string()),
+            <span class="kw">_ </span>=&gt; (),
         }
     }
 
-    <span class="ident">result</span>
+    result
 
 }
 
 
-<span class="doccomment">/// Rot13 code for more information [here](https://en.wikipedia.org/wiki/ROT13) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rot13</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="ident">shift_word</span>(<span class="ident">text</span>, <span class="number">13usize</span>)
+<span class="doccomment">/// Rot13 code for more information [here](https://en.wikipedia.org/wiki/ROT13) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>rot13(text: <span class="kw-2">&amp;</span>str) -&gt; String {
+    shift_word(text, <span class="number">13usize</span>)
 }
 
-<span class="doccomment">///Cesar code for more information [here](https://en.wikipedia.org/wiki/Caesar_cipher) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cesar</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="ident">shift_word</span>(<span class="ident">text</span>, <span class="number">3usize</span>)
+<span class="doccomment">///Cesar code for more information [here](https://en.wikipedia.org/wiki/Caesar_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>cesar(text: <span class="kw-2">&amp;</span>str) -&gt; String {
+    shift_word(text, <span class="number">3usize</span>)
 }
 
-<span class="doccomment">///Vigenere cipher encoder for more information [here](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vigenere_crypt</span>(<span class="ident">frase</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>();
+<span class="doccomment">///Vigenere cipher encoder for more information [here](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>vigenere_crypt(frase: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">let </span>chars = <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="string">&quot;&quot;</span>.to_owned();
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">frase</span>.<span class="ident">chars</span>() {
-        <span class="kw">let</span> <span class="ident">c_index</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">find</span>(<span class="ident">c</span>);
-        <span class="kw">if</span> <span class="ident">flag</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">key</span>.<span class="ident">len</span>() {
-            <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>flag = <span class="number">0</span>;
+    <span class="kw">for </span>c <span class="kw">in </span>frase.chars() {
+        <span class="kw">let </span>c_index = chars.find(c);
+        <span class="kw">if </span>flag &gt;= key.len() {
+            flag = <span class="number">0</span>;
         }
-        <span class="kw">if</span> <span class="ident">c_index</span>.<span class="ident">is_none</span>() {
-            <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">c</span>);
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">find</span>(<span class="ident">key</span>.<span class="ident">as_bytes</span>()[<span class="ident">flag</span>] <span class="kw">as</span> <span class="ident">char</span>);
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">temp</span> <span class="op">=</span> <span class="ident">c_index</span>.<span class="ident">unwrap</span>() <span class="op">+</span> <span class="ident">n</span>.<span class="ident">unwrap</span>();
-            <span class="kw">while</span> <span class="ident">temp</span> <span class="op">&gt;</span> <span class="number">26</span> {
-                <span class="ident">temp</span> <span class="op">-</span><span class="op">=</span> <span class="number">26</span>;
+        <span class="kw">if </span>c_index.is_none() {
+            result.push(c);
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>n = chars.find(key.as_bytes()[flag] <span class="kw">as </span>char);
+            <span class="kw">let </span><span class="kw-2">mut </span>temp = c_index.unwrap() + n.unwrap();
+            <span class="kw">while </span>temp &gt; <span class="number">26 </span>{
+                temp -= <span class="number">26</span>;
             }
-            <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">chars</span>.<span class="ident">as_bytes</span>()[<span class="ident">temp</span>] <span class="kw">as</span> <span class="ident">char</span>);
+            result.push(chars.as_bytes()[temp] <span class="kw">as </span>char);
         }
-        <span class="ident">flag</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        flag += <span class="number">1</span>;
     }
 
-    <span class="ident">result</span>
+    result
 }
 
-<span class="doccomment">///Vigenere cipher decoder for more information [here](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vigenere_decrypt</span>(<span class="ident">frase</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>();
+<span class="doccomment">///Vigenere cipher decoder for more information [here](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>vigenere_decrypt(frase: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">let </span>chars = <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="string">&quot;&quot;</span>.to_owned();
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">frase</span>.<span class="ident">chars</span>() {
-        <span class="kw">let</span> <span class="ident">c_index</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">find</span>(<span class="ident">c</span>);
-        <span class="kw">if</span> <span class="ident">flag</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">key</span>.<span class="ident">len</span>() {
-            <span class="ident">flag</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>flag = <span class="number">0</span>;
+    <span class="kw">for </span>c <span class="kw">in </span>frase.chars() {
+        <span class="kw">let </span>c_index = chars.find(c);
+        <span class="kw">if </span>flag &gt;= key.len() {
+            flag = <span class="number">0</span>;
         }
-        <span class="kw">if</span> <span class="ident">c_index</span>.<span class="ident">is_none</span>() {
-            <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">c</span>);
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">find</span>(<span class="ident">key</span>.<span class="ident">as_bytes</span>()[<span class="ident">flag</span>] <span class="kw">as</span> <span class="ident">char</span>);
-            <span class="comment">//let mut temp = c_index.unwrap()-n.unwrap();</span>
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">temp</span> <span class="op">=</span> <span class="number">0</span>;
-            <span class="kw">if</span> <span class="ident">c_index</span>.<span class="ident">unwrap</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">n</span>.<span class="ident">unwrap</span>() {
-                <span class="ident">temp</span> <span class="op">=</span> <span class="ident">c_index</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="ident">n</span>.<span class="ident">unwrap</span>();
-            } <span class="kw">else</span> {
-                <span class="ident">temp</span> <span class="op">=</span> <span class="number">26</span> <span class="op">+</span> <span class="ident">c_index</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="ident">n</span>.<span class="ident">unwrap</span>();
+        <span class="kw">if </span>c_index.is_none() {
+            result.push(c);
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>n = chars.find(key.as_bytes()[flag] <span class="kw">as </span>char);
+            <span class="comment">//let mut temp = c_index.unwrap()-n.unwrap();
+            </span><span class="kw">let </span><span class="kw-2">mut </span>temp = <span class="number">0</span>;
+            <span class="kw">if </span>c_index.unwrap() &gt;= n.unwrap() {
+                temp = c_index.unwrap() - n.unwrap();
+            } <span class="kw">else </span>{
+                temp = <span class="number">26 </span>+ c_index.unwrap() - n.unwrap();
             }
 
-            <span class="kw">while</span> <span class="ident">temp</span> <span class="op">&gt;</span> <span class="number">26</span> {
-                <span class="ident">temp</span> <span class="op">-</span><span class="op">=</span> <span class="number">26</span>;
+            <span class="kw">while </span>temp &gt; <span class="number">26 </span>{
+                temp -= <span class="number">26</span>;
             }
-            <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">chars</span>.<span class="ident">as_bytes</span>()[<span class="ident">temp</span>] <span class="kw">as</span> <span class="ident">char</span>);
+            result.push(chars.as_bytes()[temp] <span class="kw">as </span>char);
         }
-        <span class="ident">flag</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        flag += <span class="number">1</span>;
     }
 
-    <span class="ident">result</span>
+    result
 }
 
-<span class="doccomment">///Carbonaro code for more information [here](https://en.wikipedia.org/wiki/Carbonari) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">carbonaro</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
+<span class="doccomment">///Carbonaro code for more information [here](https://en.wikipedia.org/wiki/Carbonari) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>carbonaro(text: <span class="kw-2">&amp;</span>str) -&gt; String {
     <span class="comment">/*
         Originale: A|B|C|D|E|F|G|H|I|L|M|N|O|P|Q|R|S|T|U|V|Z
         Criptato:  O|P|G|T|I|V|C|H|E|R|N|M|A|B|Q|L|Z|D|U|F|S
-    */</span>
-    <span class="kw">let</span> <span class="ident">alphabet</span> <span class="op">=</span> <span class="string">&quot;abcdefghilmnopqrstuvz&quot;</span>;
-    <span class="kw">let</span> <span class="ident">carbo_alphabet</span> <span class="op">=</span> <span class="string">&quot;opgtivchernmabqlzdufs&quot;</span>;
+    */
+    </span><span class="kw">let </span>alphabet = <span class="string">&quot;abcdefghilmnopqrstuvz&quot;</span>;
+    <span class="kw">let </span>carbo_alphabet = <span class="string">&quot;opgtivchernmabqlzdufs&quot;</span>;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>();
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="string">&quot;&quot;</span>.to_owned();
 
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">text</span>.<span class="ident">chars</span>() {
-        <span class="kw">let</span> <span class="ident">c_index</span> <span class="op">=</span> <span class="ident">alphabet</span>.<span class="ident">find</span>(<span class="ident">c</span>);
-        <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">carbo_alphabet</span>.<span class="ident">as_bytes</span>()[<span class="ident">c_index</span>.<span class="ident">unwrap</span>()] <span class="kw">as</span> <span class="ident">char</span>);
+    <span class="kw">for </span>c <span class="kw">in </span>text.chars() {
+        <span class="kw">let </span>c_index = alphabet.find(c);
+        result.push(carbo_alphabet.as_bytes()[c_index.unwrap()] <span class="kw">as </span>char);
     }
 
-    <span class="ident">result</span>
+    result
 }
 
-<span class="doccomment">///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Atbash) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">atbash</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">String</span> {
+<span class="doccomment">///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Atbash) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>atbash(text: <span class="kw-2">&amp;</span>str) -&gt; String {
     <span class="comment">/*
         Testo in chiaro:      a b c d e f g h i l m n o p q r s t u v z
         Testo cifrato:        Z V U T S R Q P O N M L I H G F E D C B A
-    */</span>
-    <span class="kw">let</span> <span class="ident">alphabet</span> <span class="op">=</span> <span class="string">&quot;abcdefghilmnopqrstuvz&quot;</span>;
-    <span class="kw">let</span> <span class="ident">atbash_alphabet</span> <span class="op">=</span> <span class="ident">alphabet</span>.<span class="ident">chars</span>().<span class="ident">rev</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>();
+    */
+    </span><span class="kw">let </span>alphabet = <span class="string">&quot;abcdefghilmnopqrstuvz&quot;</span>;
+    <span class="kw">let </span>atbash_alphabet = alphabet.chars().rev().collect::&lt;String&gt;();
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>();
+    <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="string">&quot;&quot;</span>.to_owned();
 
-    <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">text</span>.<span class="ident">chars</span>() {
-        <span class="kw">let</span> <span class="ident">c_index</span> <span class="op">=</span> <span class="ident">alphabet</span>.<span class="ident">find</span>(<span class="ident">c</span>);
-        <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">atbash_alphabet</span>.<span class="ident">as_bytes</span>()[<span class="ident">c_index</span>.<span class="ident">unwrap</span>()] <span class="kw">as</span> <span class="ident">char</span>);
+    <span class="kw">for </span>c <span class="kw">in </span>text.chars() {
+        <span class="kw">let </span>c_index = alphabet.find(c);
+        result.push(atbash_alphabet.as_bytes()[c_index.unwrap()] <span class="kw">as </span>char);
     }
 
-    <span class="ident">result</span>
+    result
 }
 
-<span class="comment">//MORSE</span>
-<span class="doccomment">///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Morse_code) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">morse_decoder</span>(<span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">char</span> {
-    <span class="kw">match</span> <span class="ident">text</span> {
-        <span class="string">&quot;.-&quot;</span> =&gt; <span class="string">&#39;a&#39;</span>,
-        <span class="string">&quot;-...&quot;</span> =&gt; <span class="string">&#39;b&#39;</span>,
-        <span class="string">&quot;-.-.&quot;</span> =&gt; <span class="string">&#39;c&#39;</span>,
-        <span class="string">&quot;-..&quot;</span> =&gt; <span class="string">&#39;d&#39;</span>,
-        <span class="string">&quot;.&quot;</span> =&gt; <span class="string">&#39;e&#39;</span>,
-        <span class="string">&quot;..-.&quot;</span> =&gt; <span class="string">&#39;f&#39;</span>,
-        <span class="string">&quot;--.&quot;</span> =&gt; <span class="string">&#39;g&#39;</span>,
-        <span class="string">&quot;....&quot;</span> =&gt; <span class="string">&#39;h&#39;</span>,
-        <span class="string">&quot;..&quot;</span> =&gt; <span class="string">&#39;i&#39;</span>,
-        <span class="string">&quot;.---&quot;</span> =&gt; <span class="string">&#39;j&#39;</span>,
-        <span class="string">&quot;-.-&quot;</span> =&gt; <span class="string">&#39;k&#39;</span>,
-        <span class="string">&quot;.-..&quot;</span> =&gt; <span class="string">&#39;l&#39;</span>,
-        <span class="string">&quot;--&quot;</span> =&gt; <span class="string">&#39;m&#39;</span>,
-        <span class="string">&quot;-.&quot;</span> =&gt; <span class="string">&#39;n&#39;</span>,
-        <span class="string">&quot;---&quot;</span> =&gt; <span class="string">&#39;o&#39;</span>,
-        <span class="string">&quot;.--.&quot;</span> =&gt; <span class="string">&#39;p&#39;</span>,
-        <span class="string">&quot;--.-&quot;</span> =&gt; <span class="string">&#39;q&#39;</span>,
-        <span class="string">&quot;.-.&quot;</span> =&gt; <span class="string">&#39;r&#39;</span>,
-        <span class="string">&quot;...&quot;</span> =&gt; <span class="string">&#39;s&#39;</span>,
-        <span class="string">&quot;-&quot;</span> =&gt; <span class="string">&#39;t&#39;</span>,
-        <span class="string">&quot;..-&quot;</span> =&gt; <span class="string">&#39;u&#39;</span>,
-        <span class="string">&quot;...-&quot;</span> =&gt; <span class="string">&#39;v&#39;</span>,
-        <span class="string">&quot;.--&quot;</span> =&gt; <span class="string">&#39;w&#39;</span>,
-        <span class="string">&quot;-..-&quot;</span> =&gt; <span class="string">&#39;x&#39;</span>,
-        <span class="string">&quot;-.--&quot;</span> =&gt; <span class="string">&#39;y&#39;</span>,
-        <span class="string">&quot;--..&quot;</span> =&gt; <span class="string">&#39;z&#39;</span>,
-        <span class="string">&quot;-----&quot;</span> =&gt; <span class="string">&#39;0&#39;</span>,
-        <span class="string">&quot;.----&quot;</span> =&gt; <span class="string">&#39;1&#39;</span>,
-        <span class="string">&quot;..---&quot;</span> =&gt; <span class="string">&#39;2&#39;</span>,
-        <span class="string">&quot;...--&quot;</span> =&gt; <span class="string">&#39;3&#39;</span>,
-        <span class="string">&quot;....-&quot;</span> =&gt; <span class="string">&#39;4&#39;</span>,
-        <span class="string">&quot;.....&quot;</span> =&gt; <span class="string">&#39;5&#39;</span>,
-        <span class="string">&quot;-....&quot;</span> =&gt; <span class="string">&#39;6&#39;</span>,
-        <span class="string">&quot;--...&quot;</span> =&gt; <span class="string">&#39;7&#39;</span>,
-        <span class="string">&quot;---..&quot;</span> =&gt; <span class="string">&#39;8&#39;</span>,
-        <span class="string">&quot;----.&quot;</span> =&gt; <span class="string">&#39;9&#39;</span>,
-        <span class="string">&quot;.-.-.-&quot;</span> =&gt; <span class="string">&#39;.&#39;</span>,
-        <span class="string">&quot;--..--&quot;</span> =&gt; <span class="string">&#39;,&#39;</span>,
-        <span class="string">&quot;---...&quot;</span> =&gt; <span class="string">&#39;:&#39;</span>,
-        <span class="string">&quot;..--..&quot;</span> =&gt; <span class="string">&#39;?&#39;</span>,
-        <span class="string">&quot;-...-&quot;</span> =&gt; <span class="string">&#39;=&#39;</span>,
-        <span class="string">&quot;-....-&quot;</span> =&gt; <span class="string">&#39;-&#39;</span>,
-        <span class="string">&quot;-.--.&quot;</span> =&gt; <span class="string">&#39;(&#39;</span>,
-        <span class="string">&quot;-.--.-&quot;</span> =&gt; <span class="string">&#39;)&#39;</span>,
-        <span class="string">&quot;.-..-.&quot;</span> =&gt; <span class="string">&#39;&quot;&#39;</span>,
-        <span class="string">&quot;.----.&quot;</span> =&gt; <span class="string">&#39;\&#39;&#39;</span>,
-        <span class="string">&quot;-..-.&quot;</span> =&gt; <span class="string">&#39;/&#39;</span>,
-        <span class="comment">//&quot;..--.-&quot; =&gt; &quot;TODO sottolineateo feature futura&quot;</span>
-        <span class="string">&quot;.--.-&quot;</span> =&gt; <span class="string">&#39;@&#39;</span>,
-        <span class="string">&quot;-.-.--&quot;</span> =&gt; <span class="string">&#39;!&#39;</span>,
-        <span class="kw">_</span> =&gt; <span class="string">&#39; &#39;</span>,
+<span class="comment">//MORSE
+</span><span class="doccomment">///Morse code decoder for more information [here](https://en.wikipedia.org/wiki/Morse_code) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>morse_decoder(text: <span class="kw-2">&amp;</span>str) -&gt; char {
+    <span class="kw">match </span>text {
+        <span class="string">&quot;.-&quot; </span>=&gt; <span class="string">&#39;a&#39;</span>,
+        <span class="string">&quot;-...&quot; </span>=&gt; <span class="string">&#39;b&#39;</span>,
+        <span class="string">&quot;-.-.&quot; </span>=&gt; <span class="string">&#39;c&#39;</span>,
+        <span class="string">&quot;-..&quot; </span>=&gt; <span class="string">&#39;d&#39;</span>,
+        <span class="string">&quot;.&quot; </span>=&gt; <span class="string">&#39;e&#39;</span>,
+        <span class="string">&quot;..-.&quot; </span>=&gt; <span class="string">&#39;f&#39;</span>,
+        <span class="string">&quot;--.&quot; </span>=&gt; <span class="string">&#39;g&#39;</span>,
+        <span class="string">&quot;....&quot; </span>=&gt; <span class="string">&#39;h&#39;</span>,
+        <span class="string">&quot;..&quot; </span>=&gt; <span class="string">&#39;i&#39;</span>,
+        <span class="string">&quot;.---&quot; </span>=&gt; <span class="string">&#39;j&#39;</span>,
+        <span class="string">&quot;-.-&quot; </span>=&gt; <span class="string">&#39;k&#39;</span>,
+        <span class="string">&quot;.-..&quot; </span>=&gt; <span class="string">&#39;l&#39;</span>,
+        <span class="string">&quot;--&quot; </span>=&gt; <span class="string">&#39;m&#39;</span>,
+        <span class="string">&quot;-.&quot; </span>=&gt; <span class="string">&#39;n&#39;</span>,
+        <span class="string">&quot;---&quot; </span>=&gt; <span class="string">&#39;o&#39;</span>,
+        <span class="string">&quot;.--.&quot; </span>=&gt; <span class="string">&#39;p&#39;</span>,
+        <span class="string">&quot;--.-&quot; </span>=&gt; <span class="string">&#39;q&#39;</span>,
+        <span class="string">&quot;.-.&quot; </span>=&gt; <span class="string">&#39;r&#39;</span>,
+        <span class="string">&quot;...&quot; </span>=&gt; <span class="string">&#39;s&#39;</span>,
+        <span class="string">&quot;-&quot; </span>=&gt; <span class="string">&#39;t&#39;</span>,
+        <span class="string">&quot;..-&quot; </span>=&gt; <span class="string">&#39;u&#39;</span>,
+        <span class="string">&quot;...-&quot; </span>=&gt; <span class="string">&#39;v&#39;</span>,
+        <span class="string">&quot;.--&quot; </span>=&gt; <span class="string">&#39;w&#39;</span>,
+        <span class="string">&quot;-..-&quot; </span>=&gt; <span class="string">&#39;x&#39;</span>,
+        <span class="string">&quot;-.--&quot; </span>=&gt; <span class="string">&#39;y&#39;</span>,
+        <span class="string">&quot;--..&quot; </span>=&gt; <span class="string">&#39;z&#39;</span>,
+        <span class="string">&quot;-----&quot; </span>=&gt; <span class="string">&#39;0&#39;</span>,
+        <span class="string">&quot;.----&quot; </span>=&gt; <span class="string">&#39;1&#39;</span>,
+        <span class="string">&quot;..---&quot; </span>=&gt; <span class="string">&#39;2&#39;</span>,
+        <span class="string">&quot;...--&quot; </span>=&gt; <span class="string">&#39;3&#39;</span>,
+        <span class="string">&quot;....-&quot; </span>=&gt; <span class="string">&#39;4&#39;</span>,
+        <span class="string">&quot;.....&quot; </span>=&gt; <span class="string">&#39;5&#39;</span>,
+        <span class="string">&quot;-....&quot; </span>=&gt; <span class="string">&#39;6&#39;</span>,
+        <span class="string">&quot;--...&quot; </span>=&gt; <span class="string">&#39;7&#39;</span>,
+        <span class="string">&quot;---..&quot; </span>=&gt; <span class="string">&#39;8&#39;</span>,
+        <span class="string">&quot;----.&quot; </span>=&gt; <span class="string">&#39;9&#39;</span>,
+        <span class="string">&quot;.-.-.-&quot; </span>=&gt; <span class="string">&#39;.&#39;</span>,
+        <span class="string">&quot;--..--&quot; </span>=&gt; <span class="string">&#39;,&#39;</span>,
+        <span class="string">&quot;---...&quot; </span>=&gt; <span class="string">&#39;:&#39;</span>,
+        <span class="string">&quot;..--..&quot; </span>=&gt; <span class="string">&#39;?&#39;</span>,
+        <span class="string">&quot;-...-&quot; </span>=&gt; <span class="string">&#39;=&#39;</span>,
+        <span class="string">&quot;-....-&quot; </span>=&gt; <span class="string">&#39;-&#39;</span>,
+        <span class="string">&quot;-.--.&quot; </span>=&gt; <span class="string">&#39;(&#39;</span>,
+        <span class="string">&quot;-.--.-&quot; </span>=&gt; <span class="string">&#39;)&#39;</span>,
+        <span class="string">&quot;.-..-.&quot; </span>=&gt; <span class="string">&#39;&quot;&#39;</span>,
+        <span class="string">&quot;.----.&quot; </span>=&gt; <span class="string">&#39;\&#39;&#39;</span>,
+        <span class="string">&quot;-..-.&quot; </span>=&gt; <span class="string">&#39;/&#39;</span>,
+        <span class="comment">//&quot;..--.-&quot; =&gt; &quot;TODO sottolineateo feature futura&quot;
+        </span><span class="string">&quot;.--.-&quot; </span>=&gt; <span class="string">&#39;@&#39;</span>,
+        <span class="string">&quot;-.-.--&quot; </span>=&gt; <span class="string">&#39;!&#39;</span>,
+        <span class="kw">_ </span>=&gt; <span class="string">&#39; &#39;</span>,
     }
 }
 
-<span class="doccomment">///Morse code encoder for more information [here](https://en.wikipedia.org/wiki/Morse_code) .</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">morse_coder</span>(<span class="ident">character</span>: <span class="ident">char</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
-    <span class="kw">match</span> <span class="ident">character</span> {
-        <span class="string">&#39;a&#39;</span> =&gt; <span class="string">&quot;.-&quot;</span>,
-        <span class="string">&#39;b&#39;</span> =&gt; <span class="string">&quot;-...&quot;</span>,
-        <span class="string">&#39;c&#39;</span> =&gt; <span class="string">&quot;-.-.&quot;</span>,
-        <span class="string">&#39;d&#39;</span> =&gt; <span class="string">&quot;-..&quot;</span>,
-        <span class="string">&#39;e&#39;</span> =&gt; <span class="string">&quot;.&quot;</span>,
-        <span class="string">&#39;f&#39;</span> =&gt; <span class="string">&quot;..-.&quot;</span>,
-        <span class="string">&#39;g&#39;</span> =&gt; <span class="string">&quot;--.&quot;</span>,
-        <span class="string">&#39;h&#39;</span> =&gt; <span class="string">&quot;....&quot;</span>,
-        <span class="string">&#39;i&#39;</span> =&gt; <span class="string">&quot;..&quot;</span>,
-        <span class="string">&#39;j&#39;</span> =&gt; <span class="string">&quot;.---&quot;</span>,
-        <span class="string">&#39;k&#39;</span> =&gt; <span class="string">&quot;-.-&quot;</span>,
-        <span class="string">&#39;l&#39;</span> =&gt; <span class="string">&quot;.-..&quot;</span>,
-        <span class="string">&#39;m&#39;</span> =&gt; <span class="string">&quot;--&quot;</span>,
-        <span class="string">&#39;n&#39;</span> =&gt; <span class="string">&quot;-.&quot;</span>,
-        <span class="string">&#39;o&#39;</span> =&gt; <span class="string">&quot;---&quot;</span>,
-        <span class="string">&#39;p&#39;</span> =&gt; <span class="string">&quot;.--.&quot;</span>,
-        <span class="string">&#39;q&#39;</span> =&gt; <span class="string">&quot;--.-&quot;</span>,
-        <span class="string">&#39;r&#39;</span> =&gt; <span class="string">&quot;.-.&quot;</span>,
-        <span class="string">&#39;s&#39;</span> =&gt; <span class="string">&quot;...&quot;</span>,
-        <span class="string">&#39;t&#39;</span> =&gt; <span class="string">&quot;-&quot;</span>,
-        <span class="string">&#39;u&#39;</span> =&gt; <span class="string">&quot;..-&quot;</span>,
-        <span class="string">&#39;v&#39;</span> =&gt; <span class="string">&quot;...-&quot;</span>,
-        <span class="string">&#39;w&#39;</span> =&gt; <span class="string">&quot;.--&quot;</span>,
-        <span class="string">&#39;x&#39;</span> =&gt; <span class="string">&quot;-..-&quot;</span>,
-        <span class="string">&#39;y&#39;</span> =&gt; <span class="string">&quot;-.--&quot;</span>,
-        <span class="string">&#39;z&#39;</span> =&gt; <span class="string">&quot;--..&quot;</span>,
-        <span class="string">&#39;0&#39;</span> =&gt; <span class="string">&quot;-----&quot;</span>,
-        <span class="string">&#39;1&#39;</span> =&gt; <span class="string">&quot;.----&quot;</span>,
-        <span class="string">&#39;2&#39;</span> =&gt; <span class="string">&quot;..---&quot;</span>,
-        <span class="string">&#39;3&#39;</span> =&gt; <span class="string">&quot;...--&quot;</span>,
-        <span class="string">&#39;4&#39;</span> =&gt; <span class="string">&quot;....-&quot;</span>,
-        <span class="string">&#39;5&#39;</span> =&gt; <span class="string">&quot;.....&quot;</span>,
-        <span class="string">&#39;6&#39;</span> =&gt; <span class="string">&quot;-....&quot;</span>,
-        <span class="string">&#39;7&#39;</span> =&gt; <span class="string">&quot;--...&quot;</span>,
-        <span class="string">&#39;8&#39;</span> =&gt; <span class="string">&quot;---..&quot;</span>,
-        <span class="string">&#39;9&#39;</span> =&gt; <span class="string">&quot;----.&quot;</span>,
-        <span class="string">&#39;.&#39;</span> =&gt; <span class="string">&quot;.-.-.-&quot;</span>,
-        <span class="string">&#39;,&#39;</span> =&gt; <span class="string">&quot;--..--&quot;</span>,
-        <span class="string">&#39;:&#39;</span> =&gt; <span class="string">&quot;---...&quot;</span>,
-        <span class="string">&#39;?&#39;</span> =&gt; <span class="string">&quot;..--..&quot;</span>,
-        <span class="string">&#39;=&#39;</span> =&gt; <span class="string">&quot;-...-&quot;</span>,
-        <span class="string">&#39;-&#39;</span> =&gt; <span class="string">&quot;-....-&quot;</span>,
-        <span class="string">&#39;(&#39;</span> =&gt; <span class="string">&quot;-.--.&quot;</span>,
-        <span class="string">&#39;)&#39;</span> =&gt; <span class="string">&quot;-.--.-&quot;</span>,
-        <span class="string">&#39;&quot;&#39;</span> =&gt; <span class="string">&quot;.-..-.&quot;</span>,
-        <span class="string">&#39;\&#39;&#39;</span> =&gt; <span class="string">&quot;.----.&quot;</span>,
-        <span class="string">&#39;/&#39;</span> =&gt; <span class="string">&quot;-..-.&quot;</span>,
-        <span class="comment">//&quot;..--.-&quot; =&gt; &quot;sottolineateo feature futura&quot;</span>
-        <span class="string">&#39;@&#39;</span> =&gt; <span class="string">&quot;.--.-&quot;</span>,
-        <span class="string">&#39;!&#39;</span> =&gt; <span class="string">&quot;-.-.--&quot;</span>,
-        <span class="kw">_</span> =&gt; <span class="string">&quot; &quot;</span>,
+<span class="doccomment">///Morse code encoder for more information [here](https://en.wikipedia.org/wiki/Morse_code) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>morse_coder(character: char) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+    <span class="kw">match </span>character {
+        <span class="string">&#39;a&#39; </span>=&gt; <span class="string">&quot;.-&quot;</span>,
+        <span class="string">&#39;b&#39; </span>=&gt; <span class="string">&quot;-...&quot;</span>,
+        <span class="string">&#39;c&#39; </span>=&gt; <span class="string">&quot;-.-.&quot;</span>,
+        <span class="string">&#39;d&#39; </span>=&gt; <span class="string">&quot;-..&quot;</span>,
+        <span class="string">&#39;e&#39; </span>=&gt; <span class="string">&quot;.&quot;</span>,
+        <span class="string">&#39;f&#39; </span>=&gt; <span class="string">&quot;..-.&quot;</span>,
+        <span class="string">&#39;g&#39; </span>=&gt; <span class="string">&quot;--.&quot;</span>,
+        <span class="string">&#39;h&#39; </span>=&gt; <span class="string">&quot;....&quot;</span>,
+        <span class="string">&#39;i&#39; </span>=&gt; <span class="string">&quot;..&quot;</span>,
+        <span class="string">&#39;j&#39; </span>=&gt; <span class="string">&quot;.---&quot;</span>,
+        <span class="string">&#39;k&#39; </span>=&gt; <span class="string">&quot;-.-&quot;</span>,
+        <span class="string">&#39;l&#39; </span>=&gt; <span class="string">&quot;.-..&quot;</span>,
+        <span class="string">&#39;m&#39; </span>=&gt; <span class="string">&quot;--&quot;</span>,
+        <span class="string">&#39;n&#39; </span>=&gt; <span class="string">&quot;-.&quot;</span>,
+        <span class="string">&#39;o&#39; </span>=&gt; <span class="string">&quot;---&quot;</span>,
+        <span class="string">&#39;p&#39; </span>=&gt; <span class="string">&quot;.--.&quot;</span>,
+        <span class="string">&#39;q&#39; </span>=&gt; <span class="string">&quot;--.-&quot;</span>,
+        <span class="string">&#39;r&#39; </span>=&gt; <span class="string">&quot;.-.&quot;</span>,
+        <span class="string">&#39;s&#39; </span>=&gt; <span class="string">&quot;...&quot;</span>,
+        <span class="string">&#39;t&#39; </span>=&gt; <span class="string">&quot;-&quot;</span>,
+        <span class="string">&#39;u&#39; </span>=&gt; <span class="string">&quot;..-&quot;</span>,
+        <span class="string">&#39;v&#39; </span>=&gt; <span class="string">&quot;...-&quot;</span>,
+        <span class="string">&#39;w&#39; </span>=&gt; <span class="string">&quot;.--&quot;</span>,
+        <span class="string">&#39;x&#39; </span>=&gt; <span class="string">&quot;-..-&quot;</span>,
+        <span class="string">&#39;y&#39; </span>=&gt; <span class="string">&quot;-.--&quot;</span>,
+        <span class="string">&#39;z&#39; </span>=&gt; <span class="string">&quot;--..&quot;</span>,
+        <span class="string">&#39;0&#39; </span>=&gt; <span class="string">&quot;-----&quot;</span>,
+        <span class="string">&#39;1&#39; </span>=&gt; <span class="string">&quot;.----&quot;</span>,
+        <span class="string">&#39;2&#39; </span>=&gt; <span class="string">&quot;..---&quot;</span>,
+        <span class="string">&#39;3&#39; </span>=&gt; <span class="string">&quot;...--&quot;</span>,
+        <span class="string">&#39;4&#39; </span>=&gt; <span class="string">&quot;....-&quot;</span>,
+        <span class="string">&#39;5&#39; </span>=&gt; <span class="string">&quot;.....&quot;</span>,
+        <span class="string">&#39;6&#39; </span>=&gt; <span class="string">&quot;-....&quot;</span>,
+        <span class="string">&#39;7&#39; </span>=&gt; <span class="string">&quot;--...&quot;</span>,
+        <span class="string">&#39;8&#39; </span>=&gt; <span class="string">&quot;---..&quot;</span>,
+        <span class="string">&#39;9&#39; </span>=&gt; <span class="string">&quot;----.&quot;</span>,
+        <span class="string">&#39;.&#39; </span>=&gt; <span class="string">&quot;.-.-.-&quot;</span>,
+        <span class="string">&#39;,&#39; </span>=&gt; <span class="string">&quot;--..--&quot;</span>,
+        <span class="string">&#39;:&#39; </span>=&gt; <span class="string">&quot;---...&quot;</span>,
+        <span class="string">&#39;?&#39; </span>=&gt; <span class="string">&quot;..--..&quot;</span>,
+        <span class="string">&#39;=&#39; </span>=&gt; <span class="string">&quot;-...-&quot;</span>,
+        <span class="string">&#39;-&#39; </span>=&gt; <span class="string">&quot;-....-&quot;</span>,
+        <span class="string">&#39;(&#39; </span>=&gt; <span class="string">&quot;-.--.&quot;</span>,
+        <span class="string">&#39;)&#39; </span>=&gt; <span class="string">&quot;-.--.-&quot;</span>,
+        <span class="string">&#39;&quot;&#39; </span>=&gt; <span class="string">&quot;.-..-.&quot;</span>,
+        <span class="string">&#39;\&#39;&#39; </span>=&gt; <span class="string">&quot;.----.&quot;</span>,
+        <span class="string">&#39;/&#39; </span>=&gt; <span class="string">&quot;-..-.&quot;</span>,
+        <span class="comment">//&quot;..--.-&quot; =&gt; &quot;sottolineateo feature futura&quot;
+        </span><span class="string">&#39;@&#39; </span>=&gt; <span class="string">&quot;.--.-&quot;</span>,
+        <span class="string">&#39;!&#39; </span>=&gt; <span class="string">&quot;-.-.--&quot;</span>,
+        <span class="kw">_ </span>=&gt; <span class="string">&quot; &quot;</span>,
     }
+}
+
+
+<span class="comment">//TODO VIC Crypt and Decrypt
+</span><span class="doccomment">/// VIC encoder for more information [here](https://en.wikipedia.org/wiki/VIC_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>VIC_crypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
+}
+<span class="doccomment">/// VIC decoder for more information [here](https://en.wikipedia.org/wiki/VIC_cipher) .
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>VIC_decrypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
+}
+
+<span class="comment">//TODO Hill Crypt and Decrypt
+</span><span class="doccomment">/// Hill encoder for more information [here](https://en.wikipedia.org/wiki/Hill_cipher).
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>hill_crypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
+}
+<span class="doccomment">/// Hill decoder for more information [here](https://en.wikipedia.org/wiki/Hill_cipher).
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>hill_decrypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
+}
+
+<span class="comment">//TODO ADFGVX Crypt and Decrypt
+</span><span class="doccomment">/// ADFGVX encoder for more information [here](https://en.wikipedia.org/wiki/ADFGVX_cipher).
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>adfgvx_crypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
+}
+
+<span class="doccomment">/// ADFGVX decoder for more information [here](https://en.wikipedia.org/wiki/ADFGVX_cipher).
+</span><span class="attribute">#[allow(dead_code)]
+</span><span class="kw">pub fn </span>adfgvx_decrypt(text: <span class="kw-2">&amp;</span>str, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+
+    <span class="string">&quot;&quot;</span>.to_string()
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="caduceo" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="caduceo" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
