@@ -6,6 +6,7 @@ use std::collections::HashMap;
 fn shift_word(text: &str, num: usize) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let mut result = "".to_owned();
+    
     for c in text.chars() {
         let c_index = chars.find(c);
 
@@ -482,4 +483,48 @@ pub fn morse_coder(character: char) -> &'static str {
         '!' => "-.-.--",
         _ => " ",
     }
+}
+
+
+//TODO VIC Crypt and Decrypt
+/// VIC encoder for more information [here](https://en.wikipedia.org/wiki/VIC_cipher) .
+#[allow(dead_code)]
+pub fn VIC_crypt(text: &str, key: &str) -> String {
+
+    "".to_string()
+}
+/// VIC decoder for more information [here](https://en.wikipedia.org/wiki/VIC_cipher) .
+#[allow(dead_code)]
+pub fn VIC_decrypt(text: &str, key: &str) -> String {
+
+    "".to_string()
+}
+
+//TODO Hill Crypt and Decrypt
+/// Hill encoder for more information [here](https://en.wikipedia.org/wiki/Hill_cipher).
+#[allow(dead_code)]
+pub fn hill_crypt(text: &str, key: &str) -> String {
+
+    "".to_string()
+}
+/// Hill decoder for more information [here](https://en.wikipedia.org/wiki/Hill_cipher).
+#[allow(dead_code)]
+pub fn hill_decrypt(text: &str, key: &str) -> String {
+
+    "".to_string()
+}
+
+//TODO ADFGVX Crypt and Decrypt
+/// ADFGVX encoder for more information [here](https://en.wikipedia.org/wiki/ADFGVX_cipher).
+#[allow(dead_code)]
+pub fn adfgvx_crypt(text: &str, key: &str) -> String {
+
+    "".to_string()
+}
+
+/// ADFGVX decoder for more information [here](https://en.wikipedia.org/wiki/ADFGVX_cipher).
+#[allow(dead_code)]
+pub fn adfgvx_decrypt(text: &str, key: &str) -> String {
+
+    "".to_string()
 }
