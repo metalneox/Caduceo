@@ -1,30 +1,49 @@
-//extern crate itertools;
+extern crate itertools;
 use itertools::Itertools;
 use std::collections::HashMap;
 
 
-fn shift_word(text: &str, num: usize) -> String {
-    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let mut result = "".to_owned();
-    
-    for c in text.chars() {
-        let c_index = chars.find(c);
+//fn shift_word(text: &str, num: usize) -> String {
+//    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//    let mut result = "".to_owned();
+//    
+//    for c in text.chars() {
+//        let c_index = chars.find(c);
+//
+//        if c_index.is_none() {
+//            result.push(c);
+//        } else {
+//            let temp = c_index.unwrap() + num;
+//
+//            if temp < 52 {
+//                result.push(chars.as_bytes()[temp] as char);
+//            } else {
+//                result.push(chars.as_bytes()[temp - 26] as char);
+//            }
+//        }
+//    }
+//
+//    result
+//}
 
-        if c_index.is_none() {
-            result.push(c);
+
+fn shift_word(s: &str,num: usize) -> String {
+    s.chars().map(|c| {
+        if c.is_alphabetic() {
+            let base = if c.is_uppercase() { 'A' } else { 'a' };
+            ( ((c as u8) - (base as u8) + num as u8) % 26 + (base as u8) ) as char
         } else {
-            let temp = c_index.unwrap() + num;
-
-            if temp < 52 {
-                result.push(chars.as_bytes()[temp] as char);
-            } else {
-                result.push(chars.as_bytes()[temp - 26] as char);
-            }
+            c
         }
-    }
-
-    result
+    }).collect()
 }
+
+
+
+
+
+
+
 
 fn sub_strings(source: &str, sub_size: usize) -> Vec<String> {
     source

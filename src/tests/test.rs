@@ -4,11 +4,11 @@ pub mod tests {
 
     #[test]
     fn easy() {
-        assert_eq!(rot13("aaa"), "nnn");
+        assert_eq!(rot13("Aaa"), "Nnn");
     }
     #[test]
     fn middle() {
-        assert_eq!(rot13("a aa"), "n nn");
+        assert_eq!(rot13("Prova"), "Cebin");
     }
     #[test]
     fn vcrypt() {
