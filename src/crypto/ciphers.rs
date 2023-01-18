@@ -530,7 +530,7 @@ pub fn affine_crypt((a, b): (usize, usize), text: &str) -> String {
     result
 }
 
-
+/// Affine cipher for more information [here](https://en.wikipedia.org/wiki/Affine_cipher).
 #[allow(dead_code)]
 pub fn affine_decrypt((a, b): (i32, i32), text: &str) -> String {
     let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyz".chars().collect();
