@@ -57,7 +57,22 @@ pub mod tests {
         assert_eq!(nihilist_decrypt("65 46 57 94 37", "ciao"), "prova")
     }
 
+    #[test]
+    fn affine_crypt_test() {
+        assert_eq!(affine_crypt((5,8), "ciao"), "swia".to_string())
+    }
 
+    #[test]
+    fn affine_crypt_test2() {
+        assert_eq!(affine_crypt((5,8), "CIAO"), "SWIA".to_string()) }
 
+    //#[test]
+    //fn affine_decrypt_test() {
+    //    assert_eq!(affine_decrypt((21,8), "swia"), "ciao".to_string())
+    //}
+
+    //#[test]
+    //fn affine_decrypt_test2() {
+    //    assert_eq!(affine_crypt((21,8), "SWIA"), "CIAO".to_string()) }
 
 }

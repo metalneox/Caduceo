@@ -2,31 +2,7 @@ extern crate itertools;
 use itertools::Itertools;
 use std::collections::HashMap;
 
-
-//fn shift_word(text: &str, num: usize) -> String {
-//    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//    let mut result = "".to_owned();
-//    
-//    for c in text.chars() {
-//        let c_index = chars.find(c);
-//
-//        if c_index.is_none() {
-//            result.push(c);
-//        } else {
-//            let temp = c_index.unwrap() + num;
-//
-//            if temp < 52 {
-//                result.push(chars.as_bytes()[temp] as char);
-//            } else {
-//                result.push(chars.as_bytes()[temp - 26] as char);
-//            }
-//        }
-//    }
-//
-//    result
-//}
-
-
+//Internal function to shift characters
 fn shift_word(s: &str,num: usize) -> String {
     s.chars().map(|c| {
         if c.is_alphabetic() {
@@ -38,13 +14,6 @@ fn shift_word(s: &str,num: usize) -> String {
     }).collect()
 }
 
-
-
-
-
-
-
-
 fn sub_strings(source: &str, sub_size: usize) -> Vec<String> {
     source
         .chars()
@@ -53,14 +22,10 @@ fn sub_strings(source: &str, sub_size: usize) -> Vec<String> {
         .map(|chunk| chunk.collect::<String>())
         .collect::<Vec<_>>()
 }
-//latin alphabet,e altri tipi
-//struct chess_init;
 
 //only for decrypt
-//chiave valore opzionale
 fn polybius_chess(alphabet: &str, size: usize) -> HashMap<usize, char> {
     let mut chess: HashMap<usize, char> = HashMap::new();
-    //let size = 5;
 
     let mut index = 11;
     let mut flag_loop = 0;
@@ -81,7 +46,6 @@ fn polybius_chess(alphabet: &str, size: usize) -> HashMap<usize, char> {
     }
     chess
 }
-//chiave valore opzionale non esiste un altra funzione
 fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
     let mut chess: HashMap<char, usize> = HashMap::new();
     //let size = 5;
@@ -105,7 +69,6 @@ fn polybius_chess2(alphabet: &str, size: usize) -> HashMap<char, usize> {
     let temp = chess.get(&'i').unwrap().clone();
 
     chess.insert('j',temp);
-    //println!("prova ->{}",temp);
     chess
 }
 
@@ -172,7 +135,7 @@ pub fn polybius_decrypt(text: &str, size: usize) -> String {
 /// Nihilist encoder for more information [here](https://en.wikipedia.org/wiki/Nihilist_cipher) .
 #[allow(dead_code)]
 pub fn nihilist_crypt(text: &str, key: &str) -> String {
-    //metto 5 come size default
+    //default size
     let size = 5;
 
     let mut text_crypt = vec![];
@@ -184,12 +147,6 @@ pub fn nihilist_crypt(text: &str, key: &str) -> String {
     let chars = "zebrascdfghiklmnopqtuvwxy";
 
     let square = polybius_chess2(chars, size);
-
-    /*  Print hashman debug
-    for (key, value) in &square {
-        println!("{}: {}", key, value);
-    }
-    */
 
     // text
     for r in text.chars() {
@@ -257,8 +214,6 @@ pub fn nihilist_decrypt(text: &str, key: &str) -> String {
         temp.push( a.parse::<usize>().unwrap() - key_crypt[flag]);
         flag += 1;
     }
-
-    println!("->{:#?}",temp);
 
     for str in temp {
         match square2.get(&str) {
@@ -547,3 +502,62 @@ pub fn adfgvx_decrypt(text: &str, key: &str) -> String {
 
     "".to_string()
 }
+
+/// https://en.wikipedia.org/wiki/Affine_cipher
+/// Affine
+
+
+#[allow(dead_code)]
+pub fn affine_crypt((a, b): (usize, usize), text: &str) -> String {
+    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyz".chars().collect();
+
+    let mut result:String = String::new();
+
+    for ch in text.chars() {
+       
+        let pos = alphabet.iter().position(|&c| c == ch.to_ascii_lowercase() ).unwrap();
+
+        let new = (a*pos + b) % 26;
+
+       
+        let current = alphabet[new as usize];
+
+        if ch.is_uppercase(){
+            result.push(current.to_ascii_uppercase())
+        }else{
+            result.push(current);
+        }    
+
+    }
+    result
+}
+
+
+#[allow(dead_code)]
+pub fn affine_decrypt((a, b): (i32, i32), text: &str) -> String {
+    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyz".chars().collect();
+
+    let mut result:String = String::new();
+
+    for ch in text.chars() {
+       
+        let pos = alphabet.iter().position(|&c| c == ch.to_ascii_lowercase() ).unwrap();
+
+        //BUG: Module negative number make problems in python work        
+        let new = a*(pos as i32 - b as i32) % 26i32;
+
+        let current = alphabet[new as usize];
+
+        if ch.is_uppercase(){
+            result.push(current.to_ascii_uppercase())
+        }else{
+            result.push(current);
+        }    
+
+    }
+
+    //println!("{}",result);
+    result
+}
+
+
