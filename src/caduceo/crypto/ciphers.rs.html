@@ -558,9 +558,6 @@
 <span id="558">558</span>
 <span id="559">559</span>
 <span id="560">560</span>
-<span id="561">561</span>
-<span id="562">562</span>
-<span id="563">563</span>
 </pre><pre class="rust"><code><span class="kw">extern crate </span>itertools;
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>std::collections::HashMap;
@@ -1066,10 +1063,8 @@
     <span class="string">&quot;&quot;</span>.to_string()
 }
 
-<span class="doccomment">/// https://en.wikipedia.org/wiki/Affine_cipher
-/// Affine
 
-
+<span class="doccomment">/// Affine cipher for more information [here](https://en.wikipedia.org/wiki/Affine_cipher).
 </span><span class="attribute">#[allow(dead_code)]
 </span><span class="kw">pub fn </span>affine_crypt((a, b): (usize, usize), text: <span class="kw-2">&amp;</span>str) -&gt; String {
     <span class="kw">let </span>alphabet: Vec&lt;char&gt; = <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>.chars().collect();
@@ -1119,8 +1114,7 @@
 
     }
 
-    <span class="comment">//println!(&quot;{}&quot;,result);
-    </span>result
+    result
 }
 
 
