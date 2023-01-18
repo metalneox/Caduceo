@@ -1094,8 +1094,8 @@
     result
 }
 
-
-<span class="attribute">#[allow(dead_code)]
+<span class="doccomment">/// Affine cipher for more information [here](https://en.wikipedia.org/wiki/Affine_cipher).
+</span><span class="attribute">#[allow(dead_code)]
 </span><span class="kw">pub fn </span>affine_decrypt((a, b): (i32, i32), text: <span class="kw-2">&amp;</span>str) -&gt; String {
     <span class="kw">let </span>alphabet: Vec&lt;char&gt; = <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>.chars().collect();
 
