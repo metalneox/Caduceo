@@ -541,9 +541,13 @@ pub fn affine_decrypt((a, b): (i32, i32), text: &str) -> String {
        
         let pos = alphabet.iter().position(|&c| c == ch.to_ascii_lowercase() ).unwrap();
 
-        //BUG: Module negative number make problems in python work        
-        let new = a*(pos as i32 - b as i32) % 26i32;
+        let mut new = a*(pos as i32 - b as i32) % 26i32;
 
+        if new.is_negative(){
+            new = new + 26;
+        }
+
+        println!("{}",new);
         let current = alphabet[new as usize];
 
         if ch.is_uppercase(){

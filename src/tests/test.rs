@@ -66,13 +66,14 @@ pub mod tests {
     fn affine_crypt_test2() {
         assert_eq!(affine_crypt((5,8), "CIAO"), "SWIA".to_string()) }
 
-    //#[test]
-    //fn affine_decrypt_test() {
-    //    assert_eq!(affine_decrypt((21,8), "swia"), "ciao".to_string())
-    //}
+    #[test]
+    fn affine_decrypt_test() {
+        assert_eq!(affine_decrypt((21,8), "swia"), "ciao".to_string())
+    }
 
-    //#[test]
-    //fn affine_decrypt_test2() {
-    //    assert_eq!(affine_crypt((21,8), "SWIA"), "CIAO".to_string()) }
+    #[test]
+    fn affine_decrypt_test2() {
+        assert_eq!(affine_decrypt((21,8), "SWIA"), "CIAO".to_string()) 
+    }
 
 }
