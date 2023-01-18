@@ -558,6 +558,10 @@
 <span id="558">558</span>
 <span id="559">559</span>
 <span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
 </pre><pre class="rust"><code><span class="kw">extern crate </span>itertools;
 <span class="kw">use </span>itertools::Itertools;
 <span class="kw">use </span>std::collections::HashMap;
@@ -1101,9 +1105,13 @@
        
         <span class="kw">let </span>pos = alphabet.iter().position(|<span class="kw-2">&amp;</span>c| c == ch.to_ascii_lowercase() ).unwrap();
 
-        <span class="comment">//BUG: Module negative number make problems in python work        
-        </span><span class="kw">let </span>new = a<span class="kw-2">*</span>(pos <span class="kw">as </span>i32 - b <span class="kw">as </span>i32) % <span class="number">26i32</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>new = a<span class="kw-2">*</span>(pos <span class="kw">as </span>i32 - b <span class="kw">as </span>i32) % <span class="number">26i32</span>;
 
+        <span class="kw">if </span>new.is_negative(){
+            new = new + <span class="number">26</span>;
+        }
+
+        <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>,new);
         <span class="kw">let </span>current = alphabet[new <span class="kw">as </span>usize];
 
         <span class="kw">if </span>ch.is_uppercase(){

@@ -76,6 +76,7 @@
 <span id="76">76</span>
 <span id="77">77</span>
 <span id="78">78</span>
+<span id="79">79</span>
 </pre><pre class="rust"><code><span class="attribute">#[cfg(test)]
 </span><span class="kw">pub mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::crypto::ciphers::<span class="kw-2">*</span>;
@@ -144,15 +145,16 @@
     </span><span class="kw">fn </span>affine_crypt_test2() {
         <span class="macro">assert_eq!</span>(affine_crypt((<span class="number">5</span>,<span class="number">8</span>), <span class="string">&quot;CIAO&quot;</span>), <span class="string">&quot;SWIA&quot;</span>.to_string()) }
 
-    <span class="comment">//#[test]
-    //fn affine_decrypt_test() {
-    //    assert_eq!(affine_decrypt((21,8), &quot;swia&quot;), &quot;ciao&quot;.to_string())
-    //}
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>affine_decrypt_test() {
+        <span class="macro">assert_eq!</span>(affine_decrypt((<span class="number">21</span>,<span class="number">8</span>), <span class="string">&quot;swia&quot;</span>), <span class="string">&quot;ciao&quot;</span>.to_string())
+    }
 
-    //#[test]
-    //fn affine_decrypt_test2() {
-    //    assert_eq!(affine_crypt((21,8), &quot;SWIA&quot;), &quot;CIAO&quot;.to_string()) }
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>affine_decrypt_test2() {
+        <span class="macro">assert_eq!</span>(affine_decrypt((<span class="number">21</span>,<span class="number">8</span>), <span class="string">&quot;SWIA&quot;</span>), <span class="string">&quot;CIAO&quot;</span>.to_string()) 
+    }
 
-</span>}
+}
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="caduceo" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0 (69f9c33d7 2022-12-12)" ></div></body></html>
