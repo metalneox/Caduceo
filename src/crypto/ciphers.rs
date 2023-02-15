@@ -229,8 +229,8 @@ pub fn nihilist_decrypt(text: &str, key: &str) -> String {
 
 /// Rot13 code for more information [here](https://en.wikipedia.org/wiki/ROT13) .
 #[allow(dead_code)]
-pub fn rot13(text: &str) -> String {
-    shift_word(text, 13usize)
+pub fn rot13(text: String) -> String {
+    shift_word(&text, 13usize)
 }
 
 ///Cesar code for more information [here](https://en.wikipedia.org/wiki/Caesar_cipher) .
